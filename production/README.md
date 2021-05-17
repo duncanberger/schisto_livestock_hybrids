@@ -1,13 +1,11 @@
 # Mapping, variant calling and quality control
 
 ## Table of contents
-1. [Project setup](#setup)
-2. [Raw data](#raw)
-3. [Mapping](#mapping)
-4. [Variant calling](#variantcalling)
-5. [Quality control](#qc)
-
-## 02 - Raw data <a name="raw"></a>
+1. [Raw data](#raw)
+2. [Mapping](#mapping)
+3. [Variant calling](#variantcalling)
+4. [Quality control](#qc)
+## 01 - Raw data <a name="raw"></a>
 ### Reference genome
 ```
 # Remove unplaced contigs
@@ -19,7 +17,7 @@ seqtk subseq tdSchCurr1.primary.fa include.list > tdSchCurr1.chrom.fa
 bwa index tdSchCurr1.chrom.fa
 gatk CreateSequenceDictionary --REFERENCE tdSchCurr1.chrom.fa
 ```
-## 03 - Mapping <a name="mapping"></a>
+## 02 - Mapping <a name="mapping"></a>
 ### Map sequence reads to reference genome
 ```
 # Repeat as needed for each read set, for example:
@@ -49,7 +47,7 @@ bedtools coverage -sorted -g tdSchCurr1.chrom.fa.fai -d -a tdSchCurr1.chrom.25kb
 awk '{print $1,$2,$3,$4,$5,$6,FILENAME}' SAMPLE1.cov | sed 's/.cov//g' > SAMPLE1.recov
 cat *.recov > all.recov.txt
 ```
-## 04 - Variant calling <a name="variantcalling"></a>
+## 03 - Variant calling <a name="variantcalling"></a>
 
 ### Per-sampling variant calling
 ```
@@ -65,7 +63,7 @@ gatk CombineGVCFs --arguments_file argument.list --reference tdSchCurr1.chrom.fa
 # Genotype
 gatk GenotypeGVCFs --reference tdSchCurr1.chrom.fa --variant merged_all_samples.g.vcf --output merged_all_samples.vcf
 ```
-## 05 - Quality control <a name="qc"></a>
+## 04 - Quality control <a name="qc"></a>
 ### Calculate quality scores for all variant sites
 ```
 # Produce a table of quality scores for each variant site
