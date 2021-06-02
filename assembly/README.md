@@ -109,7 +109,36 @@ gcpp -j 12 --referenceFilename assembly.clean.fasta -o assembly.clean.A2.fasta p
 ## 05 - Haplotype resolution <a name="purge_dups"></a>
 ### 
 ```
+# Subset to get the primary assembly
+grep PRIM assembly.clean.A2.fasta | sed 's/|//g' > primary.list
+fastqualselect.pl -f assembly.clean.A2.fasta -i primary.list > assembly.clean.A2.primary.fasta
+fastqualselect.pl -f assembly.clean.A2.fasta -i hap.list > assembly.clean.A2.haplotypes.fasta
 
+# Purge duplicates, using an file with list of FASTA subreads
+pd_config.py -l purge assembly.clean.A2.primary.fasta input.fofn
+run_purge_dups_edit.py config.json purge_dups/src/ purge
 
+# Get the primary and haplotype assemblies and redo
+pd_config.py -l purge assembly.clean.A2.primary.purged.fa input.fofn 
+cat assembly.clean.A2.haplotypes.fasta assembly.clean.A2.primary.hap.fa > all1.hap.fa
+run_purge_dups_edit.py config.json purge_dups/src/ purge
+```
+## 06 - Manual curation <a name="mcur"></a>
+### 
+```
+# Using a renamed haplotype purged assembly and preads from FALCON
+minimap2 -t 12 -ax asm20 primary_assembly.fa falcon.preads.fasta | samtools sort -@ 12 -O BAM -o preads.sort.bam
+tg_index -o preads.sort preads.sort.bam
+```
+## 07 - Polishing <a name="polish2"></a>
+### Polish assembly
+```
+# Merge primary and haplotype assemblies
+cat primary_assembly.curated.fasta haplotype_assembly.fasta > all.assembly.fasta
 
+# Align subreads to curated assembly 
+pbmm2 align -j 12 all.assembly.fasta all.subreads.bam pbmm2.mapped.A2.bam
 
+# Polish
+gcpp -j 12 --referenceFilename all.assembly.fasta -o all.assembly.A3.fasta pbmm2.mapped.A2.bam
+```
