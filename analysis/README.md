@@ -6,11 +6,8 @@
 3. [Admixture statistics](#admix)
 4. [Windowed admixture](#admix2)
 5. [Mitochondrial genome analysis](#mito)
-6. [Fixed differences] (#fixed)
-```
-Checklist:
-5. MITO calling
-```
+6. [Fixed differences](#fixed)
+
 ## 01 - Assembly QC <a name="AQC"></a>
 ### Run BUSCO
 ```
@@ -182,5 +179,23 @@ parallel "admixture -j1 {}.bed --supervised --cv 2" :::: bed.list
 parallel --dry-run "awk '{print \$1,\$2,FILENAME}' {} | sed 's/.2.Q//g' | tr '_' '\t' > {}.X" ::: *.Q
 cat *.X > all_admix_1Mb.txt
 ```
-## 05 Mitochondrial genome analysis <a name="mito"></a>
-## 06 Fixed differences <a name="fixed"></a>
+## 05 - Mitochondrial genome analysis <a name="mito"></a>
+```
+```
+## 06 - Fixed differences <a name="fixed"></a>
+```
+# Print a table of genotypes per sample
+bcftools query -f '%CHROM\t%POS\t%REF\t%ALT[\t%GT]\n' FREEZE.FULLFILTER.biallelic_snps.vcf | sed 's/|/\//g' > query.txt
+
+# Identify sites fixed homozygous ref or alt in *S. bovis* and *S. curassoni* samples
+cat query.txt | awk '$5==$16' | awk '$16==$25' | awk '$7==$17' | awk '$17==$21' | awk '$5!="./."' | awk '$7!="./."' | awk '$5!=$7' | grep -v Z > fix.difs.txt
+```
+
+
+
+
+
+
+
+
+
