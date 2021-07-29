@@ -126,6 +126,7 @@ python d_stats.py
 python d_sum.py
 ```
 ## 04 - Windowed admixture <a name="admix2"></a>
+### 50 kb window
 ```
 # Prune variants and exclude samples we don't want to analyse
 plink2 --vcf FREEZE.FULLFILTER.vcf --chr CHR_1, CHR_2, CHR_3, CHR_4, CHR_5, CHR_6, CHR_7, CHR_Z --make-bed --allow-extra-chr --set-all-var-ids @_# --out autosomes_unfiltered --keep keep.list
@@ -139,7 +140,30 @@ parallel --dry-run --colsep '\t' "plink2 --bfile prunedData --chr {1} --from-bp 
 
 # So for example the first command would be:
 plink2 --bfile prunedData --chr 1 --from-bp 0 --to-bp 50000 --make-bed --out 1_0_50000 --allow-extra-chr
-```
+ls | grep bed | cut -f1 -d "." > bed.list
 
+# Run ADMIXTURE
+parallel "admixture -j1 {}.bed --cv 2" :::: bed.list
+
+# Merge runs
+parallel --dry-run "awk '{print \$1,\$2,FILENAME}' {} | sed 's/.2.Q//g' | tr '_' '\t' > {}.X" ::: *.Q
+cat *.X > all_admix_50kb.txt
+```
+### 1 Mb windows
+```
+# Make windows
+bedtools makewindows -g tdSchCurr1.primary.fa.fai -w 1000000 -s 500000 > 1Mb.bed
+
+# Make bed files
+parallel --dry-run --colsep '\t' "plink2 --bfile prunedData --chr {1} --from-bp {2} --to-bp {3} --make-bed --out {1}_{2}_{3} --allow-extra-chr" :::: 1Mb.bed
+ls | grep bed | cut -f1 -d "." > bed.list
+
+# Run ADMIXTURE
+parallel "admixture -j1 {}.bed --supervised --cv 2" :::: bed.list
+
+# Merge runs
+parallel --dry-run "awk '{print \$1,\$2,FILENAME}' {} | sed 's/.2.Q//g' | tr '_' '\t' > {}.X" ::: *.Q
+cat *.X > all_admix_1Mb.txt
+```
 
   
