@@ -8,9 +8,7 @@
 
 ```
 Checklist:
-2. PCA, ADMIXTURE, tree
-3. ADmixture stats
-4. f3, PAT D, Junction counting, NEWHYBRIDS
+4. Junction counting, NEWHYBRIDS
 5. MITO calling
 ```
 ## 01 - Assembly QC <a name="AQC"></a>
@@ -109,11 +107,22 @@ join <(sort all.count.bed) <(sort het.count.bed) -e0 -a1 -o auto | sed 's/-/ /g'
 ```
 ### f3
 ```
+# Make a zarr file
 python make_zarr.py
-python 
+
+# Per window
+python f3_stats.py
+
+# Overall
+python f3_sum.py
 ```
 ### Patterson's D
 ```
+# Per window
+python d_stats.py
+
+# Overall
+python d_sum.py
 ```
 
 
