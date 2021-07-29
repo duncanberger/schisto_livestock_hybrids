@@ -9,7 +9,6 @@
 
 ```
 Checklist:
-4. Junction counting, NEWHYBRIDS
 5. MITO calling
 ```
 ## 01 - Assembly QC <a name="AQC"></a>
@@ -125,6 +124,24 @@ python d_stats.py
 # Overall
 python d_sum.py
 ```
+### NEWHYBRIDS
+```
+# Subset VCF to keeep only sites with no missingness
+bcftools view -i 'F_MISSING<0.1' FREEZE.FULLFILTER.biallelic_snps.vcf > FREEZE.FULLFILTER.biallelic_snps.nomiss.vcf
+bcftools query -f '[%CHROM\t%POS\t%SAMPLE\t%GT\n]' FREEZE.FULLFILTER.biallelic_snps.nomiss.vcf > all_snps.nomiss.list
+
+# Make random subsets of all variants
+parallel "cut -f1,2 all_snps.nomiss.list | sort | uniq | shuf > head -200 > subset.{}.txt" ::: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+
+# Make a new subset VCF
+parallel "bcftools view -T subset.{}.txt -o subset.{}.vcf FREEZE.FULLFILTER.biallelic_snps.nomiss.vcf" ::: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+
+# Convert to NEWHYBRIDS format
+parallel "java -Xmx1024m -Xms512m -jar PGDSpider2-cli.jar -inputfile subset.{}.vcf -inputformat VCF -outputfile subset.{}.newhybrids -outputformat NEWHYBRIDS -spid all.spid" ::: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+
+# Run NEWHYBRIDS for each subset, e.g.:
+newhybs --no-gui -d subset.1.newhybrids --num-sweeps 500000 --burn-in 150000 --seeds 15 22
+```
 ## 04 - Windowed admixture <a name="admix2"></a>
 ### 50 kb window
 ```
@@ -166,4 +183,3 @@ parallel --dry-run "awk '{print \$1,\$2,FILENAME}' {} | sed 's/.2.Q//g' | tr '_'
 cat *.X > all_admix_1Mb.txt
 ```
 
-  
