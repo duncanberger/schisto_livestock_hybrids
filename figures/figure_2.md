@@ -1,4 +1,4 @@
-## 00 - Project setup <a name="setup"></a>
+## Figure 2
 ### Load libraries
 ```
 library("ggplot2")
