@@ -106,6 +106,8 @@ join <(sort all.count.bed) <(sort het.count.bed) -e0 -a1 -o auto | sed 's/-/ /g'
 ```
 ### f3
 ```
+python make_zarr.py
+python 
 ```
 ### Patterson's D
 ```
