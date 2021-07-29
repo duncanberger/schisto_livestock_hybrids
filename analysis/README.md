@@ -180,7 +180,29 @@ parallel --dry-run "awk '{print \$1,\$2,FILENAME}' {} | sed 's/.2.Q//g' | tr '_'
 cat *.X > all_admix_1Mb.txt
 ```
 ## 05 - Mitochondrial genome analysis <a name="mito"></a>
+### Make a PCA plot
 ```
+# Convert vcf to plink .bed format, select autosomes. 
+plink2 --vcf FREEZE.MITO.vcf --make-bed --allow-extra-chr --set-all-var-ids @_# --out mito_unfiltered
+```
+### Principal component analysis
+```
+plink2 --bfile mito_unfiltered --allow-extra-chr --set-all-var-ids @_# --pca
+```
+### Neighbour-joining phylogeny
+```
+# Produce a distance matrix
+plink2 --bfile mito_unfiltered --allow-extra-chr --set-all-var-ids @_# --distance square 1-ibs
+paste <( cut -f2 prunedData_tree.mdist.id) prunedData_tree.mdist | cat <(cut -f2 prunedData_tree.mdist.id | tr '\n' '\t' | sed -e '1s/^/\t/g') - > mito.mdist
+```
+### Admixture
+```
+#Fix scaffold names in bim file (ADMIXTURE accepts numerical scaffold names only)
+sed -i 's/CHR_//g' mito_unfiltered.bim
+
+# Run ADMIXTURE of values of K:1-20, using 10 randomly generated seeds.
+# There is no way of renaming admixture output based on seed value, so to avoid overwriting output files for each seed replicate, run in their own directory or batch run each seed one at a time. 
+admixture -j2 --seed={1} -B1000 mito_unfiltered.bed {2} --cv=10
 ```
 ## 06 - Fixed differences <a name="fixed"></a>
 ```
