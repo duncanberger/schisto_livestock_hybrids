@@ -35,7 +35,6 @@ awk '{print $1,$NF}' tdSchCurr1_Arima.txt > tdSchCurr1.CHROM.sizes
 
 # Run Juicer
 juicer.sh -g tdSchCurr1 -s Arima -y tdSchCurr1_Arima.txt -p tdSchCurr1.CHROM.sizes -z tdSchCurr1.primary.renamed.fa -t 8 -D software/juicer/
-------------------------------------
 ```
 ## 02 - Population structure <a name="pca"></a>
 ### Make a PCA plot
@@ -83,3 +82,35 @@ cat *.Q > admixture_all.txt
 # Get a table of CV scores, found in the stdout files (in our case *.o files)
 cat *.o | grep CV | cut -f2 -d "=" | sed 's/)://g' | tr ' ' '\t' > cv_scores.txt
 ```
+## 03 - Admixture statistics <a name="admix"></a>
+### Count heterozygous variants
+```
+# Make a VCF with biallelic SNPs only
+bcftools view --min-ac 2 --types snps --max-ac 2 -o FREEZE.FULLFILTER.biallelic_snps.vcf FREEZE.FULLFILTER.vcf
+
+# Get a list of SNPs per site per sample
+bcftools query -f '[%CHROM\t%POS\t%SAMPLE\t%GT\n]' FREEZE.FULLFILTER.biallelic_snps.vcf > all_snps.list
+grep -e "0\/1" -e "0|1" all_snps.list > het_snps.list
+
+# Make a bed file (50 kb windows)
+samtools faidx tdSchCurr1.primary.fa
+bedtools makewindows -g tdSchCurr1.primary.fa.fai -w 50000 > 50kb.bed
+
+# Merge SNP list and bed file
+bedtools intersect -wb -a all_snps.list -b 50kb.bed | sed 's/|/\//g' | cut -f4,5,6,7,8,9 | awk '{print "A",$2,$3,$4,$5,$6}' | tr ' ' '\t' | sort -k2,2 -k3,3 -k4,4 | datamash -g2,3,4,5 count 1 | tr '\t' '-' > all.count.bed
+
+bedtools intersect -wb -a het_snps.list -b 50kb.bed | sed 's/|/\//g' | cut -f4,5,6,7,8,9 | awk '{print "A",$2,$3,$4,$5,$6}' | tr ' ' '\t' | sort -k2,2 -k3,3 -k4,4 | datamash -g2,3,4,5 count 1 | tr '\t' '-' > het.count.bed
+
+# Combine all SNP counts and heterozygous SNPs only counts
+join <(sort all.count.bed) <(sort het.count.bed) -e0 -a1 -o auto | sed 's/-/ /g' | sed 's/ / /g' > merged.hets.all.txt
+```
+### f3
+```
+```
+### Patterson's D
+```
+```
+
+
+
+  
