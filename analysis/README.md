@@ -6,7 +6,7 @@
 3. [Admixture statistics](#admix)
 4. [Windowed admixture](#admix2)
 5. [Mitochondrial genome analysis](#mito)
-
+6. [Fixed differences] (#fixed)
 ```
 Checklist:
 5. MITO calling
@@ -182,4 +182,5 @@ parallel "admixture -j1 {}.bed --supervised --cv 2" :::: bed.list
 parallel --dry-run "awk '{print \$1,\$2,FILENAME}' {} | sed 's/.2.Q//g' | tr '_' '\t' > {}.X" ::: *.Q
 cat *.X > all_admix_1Mb.txt
 ```
-
+## 05 Mitochondrial genome analysis <a name="mito"></a>
+## 06 Fixed differences <a name="fixed"></a>
