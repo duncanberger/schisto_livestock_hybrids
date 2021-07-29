@@ -4,7 +4,8 @@
 1. [Assembly QC](#AQC)
 2. [Population Structure](#pca)
 3. [Admixture statistics](#admix)
-4. [Mitochondrial genome analysis](#mito)
+4. [Windowed admixture](#admix2)
+5. [Mitochondrial genome analysis](#mito)
 
 ```
 Checklist:
@@ -105,7 +106,7 @@ bedtools intersect -wb -a het_snps.list -b 50kb.bed | sed 's/|/\//g' | cut -f4,5
 # Combine all SNP counts and heterozygous SNPs only counts
 join <(sort all.count.bed) <(sort het.count.bed) -e0 -a1 -o auto | sed 's/-/ /g' | sed 's/ / /g' > merged.hets.all.txt
 ```
-### f3
+### *f*3
 ```
 # Make a zarr file
 python make_zarr.py
@@ -124,7 +125,21 @@ python d_stats.py
 # Overall
 python d_sum.py
 ```
+## 04 - Windowed admixture <a name="admix2"></a>
+```
+# Prune variants and exclude samples we don't want to analyse
+plink2 --vcf FREEZE.FULLFILTER.vcf --chr CHR_1, CHR_2, CHR_3, CHR_4, CHR_5, CHR_6, CHR_7, CHR_Z --make-bed --allow-extra-chr --set-all-var-ids @_# --out autosomes_unfiltered --keep keep.list
 
+# Remove variants in strong linkage disequilibrium
+plink2 --bfile autosomes_unfiltered --allow-extra-chr --set-all-var-ids @_# --indep-pairwise 50 10 0.15
+plink2 --bfile autosomes_unfiltered --allow-extra-chr --set-all-var-ids @_# --extract autosomes_unfiltered.prune.in --out prunedData --make-bed
+
+# Using the 50 kb windows from 03, make bed files for each 50 kb window in parallel, keeping only those samples you want to analyse (or use as reference populations)
+parallel --dry-run --colsep '\t' "plink2 --bfile prunedData --chr {1} --from-bp {2} --to-bp {3} --make-bed --out {1}_{2}_{3} --allow-extra-chr" :::: 50kb.bed
+
+# So for example the first command would be:
+plink2 --bfile prunedData --chr 1 --from-bp 0 --to-bp 50000 --make-bed --out 1_0_50000 --allow-extra-chr
+```
 
 
   
