@@ -8,7 +8,7 @@ library("ape", lib.loc="~/Library/R/4.0/library")
 library("phytools", lib.loc="~/Library/R/4.0/library")
 library("ggtree", lib.loc="~/Library/R/4.0/library")
 ```
-### AUTOSOMAL PCA
+### Autosomal PCA
 ```
 # Load metadata
 key <- read.table("metadata.csv", header=TRUE, sep=",",comment.char = "")
