@@ -23,6 +23,9 @@ run_BUSCO.py -i tdSchCurr1.chrom.fa -o busco_euk_09 -l lineage_datasets/eukaryot
 # Run PROMER
 promer --mum -p promer Smansoni_v7.fa.masked.masked tdSchCurr1.chrom.fa
 
+# Process promer output
+perl Nucmer.2.circos.pl --promer --debug --parse_contig_names --label_size=8 --min_chr_len=1500000 --min_hit_len=500 --ribbons --min_ID=90 --query_order=rel --flipquery promer.delta
+
 # Circos plot
 circos -conf circos.conf -param image/radius=850p
 ```
