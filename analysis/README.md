@@ -7,6 +7,8 @@
 4. [Windowed admixture](#admix2)
 5. [Mitochondrial genome analysis](#mito)
 6. [Fixed differences](#fixed)
+7. [Contamination QC](#cont)
+
 
 ## 01 - Assembly QC <a name="AQC"></a>
 ### Run BUSCO
@@ -212,14 +214,8 @@ bcftools query -f '%CHROM\t%POS\t%REF\t%ALT[\t%GT]\n' FREEZE.FULLFILTER.bialleli
 # Identify sites fixed homozygous ref or alt in *S. bovis* and *S. curassoni* samples
 cat query.txt | awk '$5==$16' | awk '$16==$25' | awk '$7==$17' | awk '$17==$21' | awk '$5!="./."' | awk '$7!="./."' | awk '$5!=$7' | grep -v Z > fix.difs.txt
 ```
-## 07 - Contamination QC
+## 07 - Contamination QC <a name="cont"></a>
 ```
 # Get genotypes and allelic depths for all heterozygous sites
 bcftools query -f '[%CHROM\t%POS\t%SAMPLE\t%GT\t%AD\n]' FREEZE.FULLFILTER.biallelic_snps.vcf | sed 's/|/\//g' | awk '$4=="0/1"' | tr ',' '\t' > AD.all.txt
 ```
-
-
-
-
-
-
