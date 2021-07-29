@@ -153,7 +153,8 @@ A18 <- ggplot(data=(subset(admix_7b, V4.y>0 & V1=="RT15_B3_01"))) + geom_bar(aes
   theme(panel.grid=element_blank(),strip.text.x = element_blank(),axis.ticks.x = element_blank(),axis.text.y = element_text(face="bold", color="black", size=8),
         axis.text.x = element_blank(),strip.text=element_text(face="bold"),axis.title.y=element_text(face="bold",size=10),panel.background = element_blank(),
         strip.background = element_blank(),panel.border = element_rect(color="black",fill=NA))
-
-# Merge plots
+```
+## Merge plots
+```
 plot_grid(A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13,A14,A15,A16,A17,A18, ncol=1)
-
+```
