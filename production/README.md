@@ -5,7 +5,6 @@
 2. [Mapping](#mapping)
 3. [Variant calling](#variantcalling)
 4. [Quality control](#qc)
-5. [Repeat Masking](#rep)
 
 ## 01 - Raw data <a name="raw"></a>
 ### Reference genome
@@ -132,23 +131,4 @@ vcftools --vcf merged_all_samples.filtered.vcf.FL1.vcf --postions retain.variant
 ### Move final versions of VCFs to the analysis folder
 ```
 mv merged_all_samples.filtered.vcf.FL2.vcf FREEZE.FULLFILTER.vcf
-```
-## 05 - Repeat Masking <a name="rep"></a>
-### Analyse repeat content
-```
-# Model repeats
-RepeatModeler -database tdSchCurr1 -pa 10 -LTRStruct -genomeSampleSizeMax 500000000
-
-# Mask repeats
-RepeatMasker -pa 10 -a -s -gff -lib tdSchCurr1-families.fa -dir custom/ -xsmall tdSchCurr1.primary.fa
-
-# Make a bed file
-bedtools makewindows -g tdSchCurr1.primary.fa.fai -w 1000000 > 1Mb.bed
-
-# Pick specific types of repeat (e.g. Penelope repeats):
-cat tdSchCurr1.primary.fa.out | grep Penelope | tr -s ' ' | sed 's/^ //g' | sed 's/ / /g' | cut -f5,6,7 > Penelope.bed
-bedtools intersect -wo -a 1mb.bed -b <( grep -v UNPLACED Penelope.bed | grep -v MITO | sed 's/CHR_//g') | cut -f1,2,3,7 | datamash -g1,2,3 sum 4 | sed 's/$/ PENNY/g' > penny-count.temp
-
-# Merge all repeat types
-*-count.temp > rep_features.bed
 ```
