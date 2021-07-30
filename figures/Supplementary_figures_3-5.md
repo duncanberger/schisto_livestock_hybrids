@@ -8,7 +8,7 @@ library("dplyr")
 ## Make plots
 ```
 # Load heterozygous site AD values
-hets <- read.table("hete_depth2.txt")
+hets <- read.table("AD.all.txt")
 
 # Load a list of samples (to loop over)
 sl <- read.table("sample.hete.list")
