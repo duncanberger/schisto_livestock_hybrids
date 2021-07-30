@@ -6,7 +6,7 @@ library("reshape2")
 ```
 ## Load data and formatting
 ```
-coverage <- read.table("all.cov", header=FALSE)
+coverage <- read.table("all.recov.txt", header=FALSE)
 selection_colors <- rep(c("grey75", "grey40"))
 selection_theme <- theme(
   legend.position="none",
