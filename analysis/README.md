@@ -8,7 +8,7 @@
 5. [Mitochondrial genome analysis](#mito)
 6. [Fixed differences](#fixed)
 7. [Contamination QC](#cont)
-
+8. [Repeat masking](#rep)
 
 ## 01 - Assembly QC <a name="AQC"></a>
 ### Run BUSCO
@@ -218,4 +218,23 @@ cat query.txt | awk '$5==$16' | awk '$16==$25' | awk '$7==$17' | awk '$17==$21' 
 ```
 # Get genotypes and allelic depths for all heterozygous sites
 bcftools query -f '[%CHROM\t%POS\t%SAMPLE\t%GT\t%AD\n]' FREEZE.FULLFILTER.biallelic_snps.vcf | sed 's/|/\//g' | awk '$4=="0/1"' | tr ',' '\t' > AD.all.txt
+```
+## 08 - Repeat Masking <a name="rep"></a>
+### Analyse repeat content
+```
+# Model repeats
+RepeatModeler -database tdSchCurr1 -pa 10 -LTRStruct -genomeSampleSizeMax 500000000
+
+# Mask repeats
+RepeatMasker -pa 10 -a -s -gff -lib tdSchCurr1-families.fa -dir custom/ -xsmall tdSchCurr1.primary.fa
+
+# Make a bed file
+bedtools makewindows -g tdSchCurr1.primary.fa.fai -w 1000000 > 1Mb.bed
+
+# Pick specific types of repeat (e.g. Penelope repeats):
+cat tdSchCurr1.primary.fa.out | grep Penelope | tr -s ' ' | sed 's/^ //g' | sed 's/ / /g' | cut -f5,6,7 > Penelope.bed
+bedtools intersect -wo -a 1mb.bed -b <( grep -v UNPLACED Penelope.bed | grep -v MITO | sed 's/CHR_//g') | cut -f1,2,3,7 | datamash -g1,2,3 sum 4 | sed 's/$/ PENNY/g' > penny-count.temp
+
+# Merge all repeat types
+*-count.temp > rep_features.bed
 ```
