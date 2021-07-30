@@ -485,8 +485,6 @@ a22 <- plot_grid(SBOV_01.out,SBOV_02.out,
                    "BK16_B8_03","BK16_B8_04",
                    "BK16_B8_05","BK16_B8_06","",""), 
           scale = 0.8,label_size = 8, vjust=-0.125, align = "v")
-ggsave(filename = "a22.svg",a22, units = c("cm"), width = 16.8, height=28)
-
 
 a23<-plot_grid(RT15_B6_01.out,BK16_B8_07.out,
           RT15_B6_01.out,BK16_B8_05.out, 
