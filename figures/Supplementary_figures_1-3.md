@@ -1,6 +1,8 @@
-# Supplementary figure 1, 2 and 3
+# Supplementary figures 1, 2 and 3
 ## Load libraries
 ```
+library("ggplot2")
+library("reshape2")
 ```
 ## Load data and formatting
 ```
