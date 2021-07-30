@@ -1,4 +1,4 @@
-# Analyses
+# Analysis
 
 ## Table of contents
 1. [Assembly QC](#AQC)
