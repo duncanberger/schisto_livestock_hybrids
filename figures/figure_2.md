@@ -55,21 +55,17 @@ pca3 <- ggplot(df_2, aes((PC3),(PC4))) +
 ```
 ### Phylogeny
 ```
-# Load distance matrix
-ltree <- read.table("autosomes.mdist", header=TRUE, row.names=1)
-tree.test <- midpoint(bionj(as.matrix(ltree)))
+# Load ML tree
+treex.test <- midpoint(read.newick("ML_wgs.nwk"))
+auto2 <- (root(treex.test, node=37))
 
-tree <- ggtree(tree.test, layout="rectangular",color="grey75")  %<+% key+
-  geom_tippoint(aes(shape=Type, fill=set_color), size=2.5, color="black") + 
+# Plot tree
+ggtree(tree.test, layout="ape",color="grey75")  %<+% key+
+  geom_tippoint(aes(shape=Type, fill=set_color), size=2, color="black") + 
   scale_shape_manual(values=c(21,24)) +
-  geom_tiplab(aes(label=Sample.ID.C), offset = 0.01, fontface="bold", size=2) +
   geom_treescale(linesize = 0.5,width=0.05, color="grey75") +
   theme(legend.position = "none") + scale_colour_identity() + 
-  geom_rootedge(rootedge = 0.01, color="grey75") +
-  scale_fill_identity() +
-  geom_cladelabel(node=36, label="S. bovis", angle=0, fontsize=3, offset=0.05, barsize=1) +
-  geom_cladelabel(node=48, label="S. curassoni", angle=0, fontsize=3, offset=0.075, barsize=1) +
-  geom_cladelabel(node=58, label="Outgroups", angle=0, fontsize=3, offset=0.1, barsize=1)
+  scale_fill_identity() 
 ```
 ### ADMIXTURE
 ```
