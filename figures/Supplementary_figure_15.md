@@ -1,4 +1,4 @@
-# Supplementary figure 11
+# Supplementary figure 15
 ## Load libraries
 ```
 library("junctions")
