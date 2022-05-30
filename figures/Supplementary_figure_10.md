@@ -1,4 +1,4 @@
-# Supplementary figure 6
+# Supplementary figure 10
 ```{r}
 # Load libraries
 library(dplyr)
