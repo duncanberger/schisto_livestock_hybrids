@@ -65,22 +65,10 @@ f <- facet_plot(e, panel="f3",
                 geom=geom_jitter2,
                 mapping=aes(x=(V3), group=V2, color="grey50"),fill="grey50", size=0.15, alpha=0.4)
 
-g <- facet_plot(f, panel="f3",
+j <- facet_plot(f, panel="f3",
                 data=(f3_subset_2),
                 geom=geom_boxploth,
                 mapping=aes(x=(V3), group=V2),alpha=0,notch=TRUE, outlier.shape=NA)
-
-# Plot Patterson's D statistics
-h <- facet_plot(g, panel="D",
-                data=D_subset,
-           geom=geom_jitter2,
-           mapping=aes(x=(V3), group=V2, color="grey50"),fill="grey50", size=0.15, alpha=0.4)
-
-i <- facet_plot(h, panel="D",
-                data=D_subset,
-                geom=geom_boxploth,
-                mapping=aes(x=(V3), group=V2),alpha=0,notch=TRUE, outlier.shape=NA) + 
-  theme(axis.text.x = element_text(face="bold", size = 8))
 
 # Resize tree
 j<- i + xlim_tree(0.5) + 
