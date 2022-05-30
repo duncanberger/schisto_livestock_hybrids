@@ -125,11 +125,8 @@ python f3_sum.py
 ```
 ### Patterson's D
 ```
-# Per window
-python d_stats.py
-
-# Overall
-python d_sum.py
+# Calculate Patterson's D statistics for all trios (where ds.list is a two column file in the format [Sample name]\t[Population])
+Dsuite Dtrios FREEZE.FULLFILTER.vcf ds.list
 ```
 ### NEWHYBRIDS
 ```
