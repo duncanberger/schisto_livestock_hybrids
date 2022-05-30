@@ -9,6 +9,7 @@
 6. [Fixed differences](#fixed)
 7. [Contamination QC](#cont)
 8. [Repeat masking](#rep)
+9. [Chromosomal synteny] (#synt)
 
 ## 01 - Assembly QC <a name="AQC"></a>
 ### Run BUSCO
@@ -230,4 +231,8 @@ bedtools intersect -wo -a 1mb.bed -b <( grep -v UNPLACED Penelope.bed | grep -v 
 
 # Merge all repeat types
 *-count.temp > rep_features.bed
+```
+## 09 - Chromosomal synteny <a name="synt"></a>
+### 
+```
 ```
