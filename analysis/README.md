@@ -229,7 +229,3 @@ bedtools intersect -wo -a 1mb.bed -b <( grep -v UNPLACED Penelope.bed | grep -v 
 # Merge all repeat types
 *-count.temp > rep_features.bed
 ```
-## 09 - Chromosomal synteny <a name="synt"></a>
-### 
-```
-```
